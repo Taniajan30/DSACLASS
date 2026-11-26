@@ -1,0 +1,46 @@
+class Solution {
+    int[] parent;
+
+    public int[] findRedundantDirectedConnection(int[][] edges) {
+        int n = edges.length;
+        int[] par = new int[n + 1];
+
+        int[] edge1 = null, edge2 = null;
+
+        for (int[] e : edges) {
+            if (par[e[1]] == 0) {
+                par[e[1]] = e[0];
+            } else {
+                edge1 = new int[]{par[e[1]], e[1]};
+                edge2 = e;
+            }
+        }
+
+        parent = new int[n + 1];
+
+        for (int i = 1; i <= n; i++)
+            parent[i] = i;
+
+        for (int[] e : edges) {
+            if (edge2 != null && e == edge2)
+                continue;
+
+            int x = find(e[0]);
+            int y = find(e[1]);
+
+            if (x == y)
+                return edge1 == null ? e : edge1;
+
+            parent[x] = y;
+        }
+
+        return edge2;
+    }
+
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]);
+
+        return parent[x];
+    }
+}
